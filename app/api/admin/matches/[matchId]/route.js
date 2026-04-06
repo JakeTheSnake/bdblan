@@ -7,7 +7,7 @@ import { getDb } from '@/lib/db.js';
 // "New LAN" form prefill: the match date + one row per player with the info
 // the admin needs to pick LAN members.
 export async function GET(_req, { params }) {
-  const matchId = params.matchId;
+  const matchId = (await params).matchId;
   if (!matchId || !/^\d+$/.test(matchId)) {
     return NextResponse.json({ error: 'bad match id' }, { status: 400 });
   }
@@ -30,10 +30,10 @@ export async function GET(_req, { params }) {
     .filter((id) => Number.isFinite(id));
   const heroes = heroIds.length
     ? await db
-        .selectFrom('heroes')
-        .select(['id', 'localized_name', 'img_url'])
-        .where('id', 'in', heroIds)
-        .execute()
+      .selectFrom('heroes')
+      .select(['id', 'localized_name', 'img_url'])
+      .where('id', 'in', heroIds)
+      .execute()
     : [];
   const heroById = new Map(heroes.map((h) => [h.id, h]));
 

@@ -7,7 +7,8 @@ import { formatDuration, formatLongDuration, formatPct, formatMatchDate, formatL
 
 export const dynamic = 'force-dynamic';
 
-export default async function LanSummaryPage({ params }) {
+export default async function LanSummaryPage(props) {
+  const params = await props.params;
   const lanId = Number(params.lanId);
   const data = await getLanSummary(lanId);
   if (!data) notFound();

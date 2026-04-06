@@ -16,7 +16,7 @@ async function isAuthed(req) {
   }
 }
 
-export async function middleware(req) {
+export async function proxy(req) {
   const { pathname } = req.nextUrl;
 
   // Let the login page and its API through.

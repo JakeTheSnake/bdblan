@@ -5,7 +5,8 @@ import { formatDuration, formatMatchDate } from '@/lib/format.js';
 
 export const dynamic = 'force-dynamic';
 
-export default async function PlayerPage({ params }) {
+export default async function PlayerPage(props) {
+  const params = await props.params;
   const lanId = Number(params.lanId);
   const accountId = Number(params.accountId);
   const data = await getPlayerStats(lanId, accountId);

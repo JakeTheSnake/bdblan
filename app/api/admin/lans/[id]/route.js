@@ -13,7 +13,8 @@ import { getDb } from '@/lib/db.js';
 // lan_matches links are gone. Player rows are left alone — they're small,
 // and match_players.account_id has no FK so deleting players would strand
 // references.
-export async function DELETE(_req, { params }) {
+export async function DELETE(_req, props) {
+  const params = await props.params;
   const lanId = Number(params.id);
   if (!lanId) return NextResponse.json({ error: 'bad id' }, { status: 400 });
 

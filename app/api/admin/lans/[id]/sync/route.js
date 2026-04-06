@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { syncLan } from '@/lib/sync.js';
 
-export async function POST(_req, { params }) {
+export async function POST(_req, props) {
+  const params = await props.params;
   const lanId = Number(params.id);
   if (!lanId) return NextResponse.json({ error: 'bad id' }, { status: 400 });
   try {

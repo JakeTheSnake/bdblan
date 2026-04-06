@@ -5,7 +5,8 @@ import { formatDuration, formatMatchDate } from '@/lib/format.js';
 
 export const dynamic = 'force-dynamic';
 
-export default async function MatchPage({ params }) {
+export default async function MatchPage(props) {
+  const params = await props.params;
   const lanId = Number(params.lanId);
   const data = await getMatchDetails(lanId, params.matchId);
   if (!data) notFound();
