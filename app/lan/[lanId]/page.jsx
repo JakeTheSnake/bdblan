@@ -2,8 +2,10 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getLanSummary } from '@/lib/aggregations/lanSummary.js';
 import { getEzCountsForLan } from '@/lib/aggregations/ezCount.js';
+import { getUniqueHeroCountsForLan } from '@/lib/aggregations/uniqueHeroes.js';
 import { getSession } from '@/lib/auth.js';
 import DeleteLanButton from '@/components/DeleteLanButton.jsx';
+import Highscore from '@/components/Highscore.jsx';
 import { formatDuration, formatLongDuration, formatPct, formatMatchDate, formatLanDateRange } from '@/lib/format.js';
 
 export const dynamic = 'force-dynamic';
@@ -11,7 +13,11 @@ export const dynamic = 'force-dynamic';
 export default async function LanSummaryPage(props) {
   const params = await props.params;
   const lanId = Number(params.lanId);
-  const [data, ezCounts] = await Promise.all([getLanSummary(lanId), getEzCountsForLan(lanId)]);
+  const [data, ezCounts, uniqueHeroCounts] = await Promise.all([
+    getLanSummary(lanId),
+    getEzCountsForLan(lanId),
+    getUniqueHeroCountsForLan(lanId),
+  ]);
   if (!data) notFound();
 
   const { lan, players, totals, matches } = data;
@@ -67,6 +73,23 @@ export default async function LanSummaryPage(props) {
           value={totals.fastestLoss ? formatDuration(totals.fastestLoss.duration) : '-'}
         />
         <StatCard label={'"ez" count'} value={ezCounts.total} />
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-lg font-medium">Highscores</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <Highscore
+            title="Unique heroes"
+            lanId={lanId}
+            rows={players
+              .map((p) => ({
+                account_id: p.account_id,
+                persona_name: p.persona_name,
+                value: uniqueHeroCounts.get(Number(p.account_id)) || 0,
+              }))
+              .sort((a, b) => b.value - a.value)}
+          />
+        </div>
       </section>
 
       <section>

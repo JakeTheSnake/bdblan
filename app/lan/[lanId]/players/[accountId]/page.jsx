@@ -16,7 +16,7 @@ export default async function PlayerPage(props) {
   ]);
   if (!data) notFound();
 
-  const { player, totals, mostPlayedHero, netWorthAt10, matches } = data;
+  const { player, totals, mostPlayedHero, heroes, netWorthAt10, matches } = data;
   const playerEzCount = ezCounts.byPlayer.get(accountId) || 0;
 
   return (
@@ -54,6 +54,10 @@ export default async function PlayerPage(props) {
           <div className="mt-2 text-xl font-semibold">
             {totals.kills} / {totals.deaths} / {totals.assists}
           </div>
+        </div>
+        <div className="rounded border p-4">
+          <div className="text-xs uppercase text-muted-foreground">Unique heroes</div>
+          <div className="mt-2 text-xl font-semibold">{heroes.length}</div>
         </div>
         <div className="rounded border p-4">
           <div className="text-xs uppercase text-muted-foreground">&quot;ez&quot; count</div>
