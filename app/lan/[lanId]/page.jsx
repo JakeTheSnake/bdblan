@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getLanSummary } from '@/lib/aggregations/lanSummary.js';
+import { getEzCountsForLan } from '@/lib/aggregations/ezCount.js';
 import { getSession } from '@/lib/auth.js';
 import DeleteLanButton from '@/components/DeleteLanButton.jsx';
 import { formatDuration, formatLongDuration, formatPct, formatMatchDate, formatLanDateRange } from '@/lib/format.js';
@@ -10,7 +11,7 @@ export const dynamic = 'force-dynamic';
 export default async function LanSummaryPage(props) {
   const params = await props.params;
   const lanId = Number(params.lanId);
-  const data = await getLanSummary(lanId);
+  const [data, ezCounts] = await Promise.all([getLanSummary(lanId), getEzCountsForLan(lanId)]);
   if (!data) notFound();
 
   const { lan, players, totals, matches } = data;
@@ -65,6 +66,7 @@ export default async function LanSummaryPage(props) {
           label="Fastest loss"
           value={totals.fastestLoss ? formatDuration(totals.fastestLoss.duration) : '-'}
         />
+        <StatCard label={'"ez" count'} value={ezCounts.total} />
       </section>
 
       <section>

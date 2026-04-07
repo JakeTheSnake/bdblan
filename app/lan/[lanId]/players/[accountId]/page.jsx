@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getPlayerStats } from '@/lib/aggregations/playerStats.js';
+import { getEzCountsForLan } from '@/lib/aggregations/ezCount.js';
 import { formatDuration, formatMatchDate } from '@/lib/format.js';
 
 export const dynamic = 'force-dynamic';
@@ -9,10 +10,14 @@ export default async function PlayerPage(props) {
   const params = await props.params;
   const lanId = Number(params.lanId);
   const accountId = Number(params.accountId);
-  const data = await getPlayerStats(lanId, accountId);
+  const [data, ezCounts] = await Promise.all([
+    getPlayerStats(lanId, accountId),
+    getEzCountsForLan(lanId),
+  ]);
   if (!data) notFound();
 
   const { player, totals, mostPlayedHero, netWorthAt10, matches } = data;
+  const playerEzCount = ezCounts.byPlayer.get(accountId) || 0;
 
   return (
     <div className="space-y-6">
@@ -49,6 +54,10 @@ export default async function PlayerPage(props) {
           <div className="mt-2 text-xl font-semibold">
             {totals.kills} / {totals.deaths} / {totals.assists}
           </div>
+        </div>
+        <div className="rounded border p-4">
+          <div className="text-xs uppercase text-muted-foreground">&quot;ez&quot; count</div>
+          <div className="mt-2 text-xl font-semibold">{playerEzCount}</div>
         </div>
         <div className="rounded border p-4">
           <div className="text-xs uppercase text-muted-foreground">Net worth @ 10</div>
