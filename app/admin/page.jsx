@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getDb } from '@/lib/db.js';
 import { formatLanDateRange } from '@/lib/format.js';
+import DeleteLanButton from '@/components/DeleteLanButton.jsx';
 
 export const dynamic = 'force-dynamic';
 
@@ -47,11 +48,14 @@ export default async function AdminHome() {
                     {formatLanDateRange(l.start_date, l.end_date)}
                   </div>
                 </div>
-                <form action={`/api/admin/lans/${l.id}/sync`} method="post">
-                  <button className="rounded border border-input px-2 py-1 text-xs">
-                    Re-sync
-                  </button>
-                </form>
+                <div className="flex items-center gap-2">
+                  <form action={`/api/admin/lans/${l.id}/sync`} method="post">
+                    <button className="rounded border border-input px-2 py-1 text-xs">
+                      Re-sync
+                    </button>
+                  </form>
+                  <DeleteLanButton lanId={l.id} lanName={l.name} />
+                </div>
               </li>
             ))}
           </ul>

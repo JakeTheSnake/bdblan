@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getDb } from '@/lib/db.js';
 
 // DELETE /api/admin/lans/[id]
@@ -54,5 +55,7 @@ export async function DELETE(_req, props) {
     }
   });
 
+  revalidatePath(`/lan/${lanId}`, 'layout');
+  revalidatePath('/');
   return NextResponse.json({ ok: true, deletedMatches: orphanedMatches });
 }

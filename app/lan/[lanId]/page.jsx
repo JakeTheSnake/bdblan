@@ -7,12 +7,10 @@ import { getKillParticipationForLan } from '@/lib/aggregations/killParticipation
 import { getHeroDamageForLan } from '@/lib/aggregations/heroDamage.js';
 import { getTowerDamageForLan } from '@/lib/aggregations/towerDamage.js';
 import { getHeroHealingForLan } from '@/lib/aggregations/heroHealing.js';
-import { getSession } from '@/lib/auth.js';
-import DeleteLanButton from '@/components/DeleteLanButton.jsx';
 import Highscore from '@/components/Highscore.jsx';
 import { formatDuration, formatLongDuration, formatPct, formatMatchDate, formatLanDateRange } from '@/lib/format.js';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = false;
 
 export default async function LanSummaryPage(props) {
   const params = await props.params;
@@ -29,20 +27,13 @@ export default async function LanSummaryPage(props) {
   if (!data) notFound();
 
   const { lan, players, totals, matches } = data;
-  const session = await getSession();
-  const isAdmin = !!session;
 
   return (
     <div className="space-y-8">
       <div>
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-semibold">{lan.name}</h1>
-            <div className="text-sm text-muted-foreground">
-              {formatLanDateRange(lan.start_date, lan.end_date)}
-            </div>
-          </div>
-          {isAdmin ? <DeleteLanButton lanId={lan.id} lanName={lan.name} /> : null}
+        <h1 className="text-2xl font-semibold">{lan.name}</h1>
+        <div className="text-sm text-muted-foreground">
+          {formatLanDateRange(lan.start_date, lan.end_date)}
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
           {players.map((p) => (

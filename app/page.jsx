@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { getDb } from '@/lib/db.js';
 import { formatLanDateRange } from '@/lib/format.js';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = false;
 
 export default async function Home() {
   const db = getDb();

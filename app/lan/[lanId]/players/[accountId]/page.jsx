@@ -4,7 +4,7 @@ import { getPlayerStats } from '@/lib/aggregations/playerStats.js';
 import { getEzCountsForLan } from '@/lib/aggregations/ezCount.js';
 import { formatDuration, formatMatchDate } from '@/lib/format.js';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = false;
 
 export default async function PlayerPage(props) {
   const params = await props.params;

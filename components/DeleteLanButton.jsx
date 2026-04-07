@@ -23,7 +23,6 @@ export default function DeleteLanButton({ lanId, lanName }) {
       setError(body.error || 'delete failed');
       return;
     }
-    router.push('/');
     router.refresh();
   }
 

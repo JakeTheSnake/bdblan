@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { getMatchDetails } from '@/lib/aggregations/matchDetails.js';
 import { formatDuration, formatMatchDate } from '@/lib/format.js';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = false;
 
 export default async function MatchPage(props) {
   const params = await props.params;

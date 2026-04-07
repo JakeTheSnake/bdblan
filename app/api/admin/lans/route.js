@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { sql } from 'kysely';
 import { getDb } from '@/lib/db.js';
 import { getPlayer } from '@/lib/opendota.js';
@@ -80,5 +81,7 @@ export async function POST(req) {
     );
   }
 
+  revalidatePath(`/lan/${lanId}`, 'layout');
+  revalidatePath('/');
   return NextResponse.json({ lanId, ...syncResult });
 }
