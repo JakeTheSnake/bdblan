@@ -4,6 +4,7 @@ import { getLanSummary } from '@/lib/aggregations/lanSummary.js';
 import { getEzCountsForLan } from '@/lib/aggregations/ezCount.js';
 import { getUniqueHeroCountsForLan } from '@/lib/aggregations/uniqueHeroes.js';
 import { getKillParticipationForLan } from '@/lib/aggregations/killParticipation.js';
+import { getHeroDamageForLan } from '@/lib/aggregations/heroDamage.js';
 import { getSession } from '@/lib/auth.js';
 import DeleteLanButton from '@/components/DeleteLanButton.jsx';
 import Highscore from '@/components/Highscore.jsx';
@@ -14,11 +15,12 @@ export const dynamic = 'force-dynamic';
 export default async function LanSummaryPage(props) {
   const params = await props.params;
   const lanId = Number(params.lanId);
-  const [data, ezCounts, uniqueHeroCounts, killParticipation] = await Promise.all([
+  const [data, ezCounts, uniqueHeroCounts, killParticipation, heroDamage] = await Promise.all([
     getLanSummary(lanId),
     getEzCountsForLan(lanId),
     getUniqueHeroCountsForLan(lanId),
     getKillParticipationForLan(lanId),
+    getHeroDamageForLan(lanId),
   ]);
   if (!data) notFound();
 
@@ -99,6 +101,17 @@ export default async function LanSummaryPage(props) {
                 account_id: p.account_id,
                 persona_name: p.persona_name,
                 value: killParticipation.get(Number(p.account_id)) || 0,
+              }))
+              .sort((a, b) => b.value - a.value)}
+          />
+          <Highscore
+            title="Hero damage"
+            lanId={lanId}
+            rows={players
+              .map((p) => ({
+                account_id: p.account_id,
+                persona_name: p.persona_name,
+                value: heroDamage.get(Number(p.account_id)) || 0,
               }))
               .sort((a, b) => b.value - a.value)}
           />
