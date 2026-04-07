@@ -31,12 +31,12 @@ export default async function MatchPage(props) {
       </div>
 
       <section className="space-y-3">
-        <TeamRow label="Our team" color="us" players={usPlayers} />
-        <TeamRow label="Enemy" color="them" players={themPlayers} />
+        <TeamRow label="Our team" color="us" players={usPlayers} lanId={lanId} />
+        <TeamRow label="Enemy" color="them" players={themPlayers} lanId={lanId} />
       </section>
 
       <section className="grid gap-4 lg:grid-cols-3">
-        <Timeline title="Towers" events={towers} renderExtra={(e) => e.key?.replace('npc_dota_', '')} />
+        <Timeline title="Towers" events={towers} renderExtra={(e) => e.key?.replace('npc_dota_', '').replace(/^(goodguys|badguys)_/, '')} />
         <Timeline title="Roshan" events={roshans} />
         <Timeline title="Tormentor" events={tormentors} />
       </section>
@@ -44,39 +44,48 @@ export default async function MatchPage(props) {
       <section>
         <h2 className="mb-2 text-lg font-medium">Net worth @ 10 min</h2>
         <div className="grid gap-2 sm:grid-cols-2">
-          <NwTable label="Us" color="us" players={usPlayers} />
-          <NwTable label="Them" color="them" players={themPlayers} />
+          <NwTable label="Us" color="us" players={usPlayers} lanId={lanId} />
+          <NwTable label="Them" color="them" players={themPlayers} lanId={lanId} />
         </div>
       </section>
     </div>
   );
 }
 
-function TeamRow({ label, color, players }) {
+function TeamRow({ label, color, players, lanId }) {
   const border = color === 'us' ? 'border-team-us' : 'border-team-them';
   return (
     <div className={`rounded border-2 ${border} p-3`}>
       <div className="mb-2 text-xs uppercase text-muted-foreground">{label}</div>
       <div className="flex flex-wrap gap-3">
-        {players.map((p) => (
-          <div key={p.player_slot} className="flex items-center gap-2">
-            {p.hero_img ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={p.hero_img} alt="" className="h-10 w-auto rounded" />
-            ) : (
-              <div className="h-10 w-16 rounded bg-muted" />
-            )}
-            <div className="text-xs">
-              <div className="font-medium">{p.hero_name || p.hero_id}</div>
-              <div className="text-muted-foreground">
-                {p.persona_name || (p.is_lan_player ? p.account_id : 'opponent')}
-              </div>
-              <div>
-                {p.kills}/{p.deaths}/{p.assists}
+        {players.map((p) => {
+          const content = (
+            <div className="flex items-center gap-2">
+              {p.hero_img ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={p.hero_img} alt="" className="h-10 w-auto rounded" />
+              ) : (
+                <div className="h-10 w-16 rounded bg-muted" />
+              )}
+              <div className="text-xs">
+                <div className="font-medium">{p.hero_name || p.hero_id}</div>
+                <div className="text-muted-foreground">
+                  {p.persona_name || (p.is_lan_player ? p.account_id : 'opponent')}
+                </div>
+                <div>
+                  {p.kills}/{p.deaths}/{p.assists}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+          return p.is_lan_player ? (
+            <Link key={p.player_slot} href={`/lan/${lanId}/players/${p.account_id}`} className="hover:opacity-80">
+              {content}
+            </Link>
+          ) : (
+            <div key={p.player_slot}>{content}</div>
+          );
+        })}
       </div>
     </div>
   );
@@ -91,11 +100,11 @@ function Timeline({ title, events, renderExtra }) {
       ) : (
         <ul className="space-y-1 text-sm">
           {events.map((e, i) => (
-            <li key={i} className="flex items-center justify-between gap-2">
+            <li
+              key={i}
+              className={`flex items-center justify-between gap-2 rounded px-2 py-0.5 ${e.is_us ? 'bg-green-500/15' : 'bg-red-500/15'}`}
+            >
               <span className="tabular-nums">{formatDuration(e.time)}</span>
-              <span className={e.is_us ? 'text-team-us' : 'text-team-them'}>
-                {e.is_us ? 'us' : 'them'}
-              </span>
               {renderExtra ? (
                 <span className="truncate text-xs text-muted-foreground">{renderExtra(e)}</span>
               ) : null}
@@ -107,7 +116,7 @@ function Timeline({ title, events, renderExtra }) {
   );
 }
 
-function NwTable({ label, color, players }) {
+function NwTable({ label, color, players, lanId }) {
   const cls = color === 'us' ? 'text-team-us' : 'text-team-them';
   return (
     <div className="rounded border p-3">
@@ -116,7 +125,15 @@ function NwTable({ label, color, players }) {
         <tbody>
           {players.map((p) => (
             <tr key={p.player_slot} className="border-t first:border-0">
-              <td className="py-1">{p.hero_name || p.hero_id}</td>
+              <td className="py-1">
+                {p.is_lan_player ? (
+                  <Link href={`/lan/${lanId}/players/${p.account_id}`} className="hover:underline">
+                    {p.hero_name || p.hero_id}
+                  </Link>
+                ) : (
+                  p.hero_name || p.hero_id
+                )}
+              </td>
               <td className="py-1 text-right tabular-nums">
                 {p.net_worth_at_10 != null ? p.net_worth_at_10 : '-'}
               </td>
