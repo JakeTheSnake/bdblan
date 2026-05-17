@@ -9,6 +9,7 @@ import { getTowerDamageForLan } from '@/lib/aggregations/towerDamage.js';
 import { getHeroHealingForLan } from '@/lib/aggregations/heroHealing.js';
 import { getSupportWardStatsForLan } from '@/lib/aggregations/supportWards.js';
 import { getCourierKillsForLan } from '@/lib/aggregations/courierKills.js';
+import { getObjectiveKillsForLan } from '@/lib/aggregations/objectiveKills.js';
 import Highscore from '@/components/Highscore.jsx';
 import { formatDuration, formatLongDuration, formatPct, formatMatchDate, formatLanDateRange } from '@/lib/format.js';
 
@@ -17,7 +18,7 @@ export const revalidate = false;
 export default async function LanSummaryPage(props) {
   const params = await props.params;
   const lanId = Number(params.lanId);
-  const [data, ezCounts, uniqueHeroCounts, killParticipation, heroDamage, towerDamage, heroHealing, supportWards, courierKills] = await Promise.all([
+  const [data, ezCounts, uniqueHeroCounts, killParticipation, heroDamage, towerDamage, heroHealing, supportWards, courierKills, objectiveKills] = await Promise.all([
     getLanSummary(lanId),
     getEzCountsForLan(lanId),
     getUniqueHeroCountsForLan(lanId),
@@ -27,6 +28,7 @@ export default async function LanSummaryPage(props) {
     getHeroHealingForLan(lanId),
     getSupportWardStatsForLan(lanId),
     getCourierKillsForLan(lanId),
+    getObjectiveKillsForLan(lanId),
   ]);
   if (!data) notFound();
 
@@ -75,6 +77,8 @@ export default async function LanSummaryPage(props) {
           label="Fastest loss"
           value={totals.fastestLoss ? formatDuration(totals.fastestLoss.duration) : '-'}
         />
+        <StatCard label="Roshan kills" value={objectiveKills.roshanKills} />
+        <StatCard label="Tormentor kills" value={objectiveKills.tormentorKills} />
         <StatCard label={'"ez" count'} value={ezCounts.total} />
       </section>
 

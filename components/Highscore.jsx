@@ -8,7 +8,7 @@ import Link from 'next/link';
 export default function Highscore({ title, lanId, rows }) {
   return (
     <div>
-      <h3 className="mb-2 text-sm font-medium">{title}</h3>
+      <h3 className="mb-2 text-primary font-medium">{title}</h3>
       <div className="overflow-x-auto rounded-lg border border-border bg-card">
         <table className="w-full text-sm">
           <thead className="bg-muted/50 text-left">
