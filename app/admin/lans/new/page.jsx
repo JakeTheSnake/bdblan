@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { BASE_PATH } from '@/lib/basePath.js';
 
 // Each row in the players list carries everything the form needs:
 //   accountId: string (empty for manual-entry rows)
@@ -46,7 +47,7 @@ export default function NewLanPage() {
     setMatchError(null);
     setMatchInfo(null);
     try {
-      const res = await fetch(`/api/admin/matches/${id}`);
+      const res = await fetch(`${BASE_PATH}/api/admin/matches/${id}`);
       const body = await res.json();
       if (!res.ok) {
         setMatchError(body.error || 'failed to load match');
@@ -102,7 +103,7 @@ export default function NewLanPage() {
       return;
     }
 
-    const res = await fetch('/api/admin/lans', {
+    const res = await fetch(`${BASE_PATH}/api/admin/lans`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({

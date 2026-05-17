@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getDb } from '@/lib/db.js';
 import { formatLanDateRange } from '@/lib/format.js';
 import DeleteLanButton from '@/components/DeleteLanButton.jsx';
+import { BASE_PATH } from '@/lib/basePath.js';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,7 +19,7 @@ export default async function AdminHome() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Admin</h1>
         <div className="flex gap-2">
-          <form action="/api/admin/heroes/sync" method="post">
+          <form action={`${BASE_PATH}/api/admin/heroes/sync`} method="post">
             <button className="rounded border border-input px-3 py-1.5 text-sm">
               Sync heroes
             </button>
@@ -49,7 +50,7 @@ export default async function AdminHome() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <form action={`/api/admin/lans/${l.id}/sync`} method="post">
+                  <form action={`${BASE_PATH}/api/admin/lans/${l.id}/sync`} method="post">
                     <button className="rounded border border-input px-2 py-1 text-xs">
                       Re-sync
                     </button>

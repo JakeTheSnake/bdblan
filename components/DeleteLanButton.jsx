@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { BASE_PATH } from '@/lib/basePath.js';
 
 export default function DeleteLanButton({ lanId, lanName }) {
   const router = useRouter();
@@ -16,7 +17,7 @@ export default function DeleteLanButton({ lanId, lanName }) {
     if (!ok) return;
     setBusy(true);
     setError(null);
-    const res = await fetch(`/api/admin/lans/${lanId}`, { method: 'DELETE' });
+    const res = await fetch(`${BASE_PATH}/api/admin/lans/${lanId}`, { method: 'DELETE' });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
       setBusy(false);

@@ -2,6 +2,7 @@
 
 import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { BASE_PATH } from '@/lib/basePath.js';
 
 export default function LoginPage() {
   return (
@@ -23,7 +24,7 @@ function LoginForm() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const res = await fetch('/api/auth/login', {
+    const res = await fetch(`${BASE_PATH}/api/auth/login`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ username, password }),
