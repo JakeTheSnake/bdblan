@@ -28,7 +28,10 @@ export default async function Home() {
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {lans.map((l) => (
-            <li key={l.id} className="rounded border p-4 hover:bg-accent">
+            <li
+              key={l.id}
+              className="rounded-lg border border-border bg-card p-4 shadow-card transition-colors hover:border-primary/50"
+            >
               <Link href={`/lan/${l.id}`} className="block">
                 <div className="text-lg font-medium">{l.name}</div>
                 <div className="text-sm text-muted-foreground">

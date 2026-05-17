@@ -32,13 +32,13 @@ export default async function PlayerPage(props) {
       </div>
 
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded border p-4">
+        <div className="rounded-lg border border-border bg-card p-4 shadow-card">
           <div className="text-xs uppercase text-muted-foreground">Most played hero</div>
           {mostPlayedHero ? (
             <div className="mt-2 flex items-center gap-3">
               {mostPlayedHero.hero_img ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={mostPlayedHero.hero_img} alt="" className="h-10 w-auto rounded" />
+                <img src={mostPlayedHero.hero_img} alt="" className="h-10 w-auto rounded ring-1 ring-border" />
               ) : null}
               <div>
                 <div className="font-medium">{mostPlayedHero.hero_name}</div>
@@ -49,21 +49,21 @@ export default async function PlayerPage(props) {
             <div className="mt-2 text-muted-foreground">-</div>
           )}
         </div>
-        <div className="rounded border p-4">
+        <div className="rounded-lg border border-border bg-card p-4 shadow-card">
           <div className="text-xs uppercase text-muted-foreground">K / D / A (totals)</div>
           <div className="mt-2 text-xl font-semibold">
             {totals.kills} / {totals.deaths} / {totals.assists}
           </div>
         </div>
-        <div className="rounded border p-4">
+        <div className="rounded-lg border border-border bg-card p-4 shadow-card">
           <div className="text-xs uppercase text-muted-foreground">Unique heroes</div>
           <div className="mt-2 text-xl font-semibold">{heroes.length}</div>
         </div>
-        <div className="rounded border p-4">
+        <div className="rounded-lg border border-border bg-card p-4 shadow-card">
           <div className="text-xs uppercase text-muted-foreground">&quot;ez&quot; count</div>
           <div className="mt-2 text-xl font-semibold">{playerEzCount}</div>
         </div>
-        <div className="rounded border p-4">
+        <div className="rounded-lg border border-border bg-card p-4 shadow-card">
           <div className="text-xs uppercase text-muted-foreground">Net worth @ 10</div>
           {netWorthAt10 ? (
             <div className="mt-2 text-sm">
@@ -78,7 +78,7 @@ export default async function PlayerPage(props) {
 
       <section>
         <h2 className="mb-3 text-lg font-medium">Matches</h2>
-        <div className="overflow-x-auto rounded border">
+        <div className="overflow-x-auto rounded-lg border border-border bg-card">
           <table className="w-full text-sm">
             <thead className="bg-muted/50 text-left">
               <tr>

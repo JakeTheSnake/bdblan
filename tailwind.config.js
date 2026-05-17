@@ -43,16 +43,20 @@ module.exports = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-        // LAN team colors
+        // LAN team colors — win/loss, tuned for the dark theme.
         team: {
-          us: '#16a34a',   // green-600
-          them: '#dc2626', // red-600
+          us: '#4a9e3f',   // win green
+          them: '#c8403a', // loss red
         },
       },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+      },
+      boxShadow: {
+        card: '0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.6)',
+        glow: '0 0 0 1px hsl(var(--ring) / 0.5), 0 0 12px -2px hsl(var(--primary) / 0.6)',
       },
     },
   },

@@ -137,7 +137,7 @@ export default async function LanSummaryPage(props) {
 
       <section>
         <h2 className="mb-3 text-lg font-medium">Matches</h2>
-        <div className="overflow-x-auto rounded border">
+        <div className="overflow-x-auto rounded-lg border border-border bg-card">
           <table className="w-full text-sm">
             <thead className="bg-muted/50 text-left">
               <tr>
@@ -172,7 +172,7 @@ export default async function LanSummaryPage(props) {
 
 function StatCard({ label, value, sub }) {
   return (
-    <div className="rounded border p-4">
+    <div className="rounded-lg border border-border bg-card p-4 shadow-card">
       <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
       <div className="mt-1 text-xl font-semibold">{value}</div>
       {sub ? <div className="text-xs text-muted-foreground">{sub}</div> : null}

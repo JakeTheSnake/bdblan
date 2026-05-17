@@ -253,7 +253,7 @@ export default function NewLanPage() {
 
         {error ? <div className="text-sm text-destructive">{error}</div> : null}
         {result ? (
-          <div className="rounded border border-green-500 bg-green-50 p-3 text-sm">
+          <div className="rounded border border-team-us/40 bg-team-us/10 p-3 text-sm">
             LAN #{result.lanId} created. {result.discovered ?? 0} matches found, {result.ingested ?? 0} ingested.
             {result.syncError ? <div className="text-destructive">Sync error: {result.syncError}</div> : null}
           </div>

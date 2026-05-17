@@ -55,7 +55,7 @@ export default async function MatchPage(props) {
 function TeamRow({ label, color, players, lanId }) {
   const border = color === 'us' ? 'border-team-us' : 'border-team-them';
   return (
-    <div className={`rounded border-2 ${border} p-3`}>
+    <div className={`rounded-lg border-2 ${border} bg-card p-3 shadow-card`}>
       <div className="mb-2 text-xs uppercase text-muted-foreground">{label}</div>
       <div className="flex flex-wrap gap-3">
         {players.map((p) => {
@@ -63,7 +63,7 @@ function TeamRow({ label, color, players, lanId }) {
             <div className="flex items-center gap-2">
               {p.hero_img ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={p.hero_img} alt="" className="h-10 w-auto rounded" />
+                <img src={p.hero_img} alt="" className="h-10 w-auto rounded ring-1 ring-border" />
               ) : (
                 <div className="h-10 w-16 rounded bg-muted" />
               )}
@@ -93,7 +93,7 @@ function TeamRow({ label, color, players, lanId }) {
 
 function Timeline({ title, events, renderExtra }) {
   return (
-    <div className="rounded border p-3">
+    <div className="rounded-lg border border-border bg-card p-3 shadow-card">
       <div className="mb-2 text-sm font-medium">{title}</div>
       {events.length === 0 ? (
         <div className="text-xs text-muted-foreground">none</div>
@@ -102,7 +102,7 @@ function Timeline({ title, events, renderExtra }) {
           {events.map((e, i) => (
             <li
               key={i}
-              className={`flex items-center justify-between gap-2 rounded px-2 py-0.5 ${e.is_us ? 'bg-green-500/15' : 'bg-red-500/15'}`}
+              className={`flex items-center justify-between gap-2 rounded px-2 py-0.5 ${e.is_us ? 'bg-team-us/15' : 'bg-team-them/15'}`}
             >
               <span className="tabular-nums">{formatDuration(e.time)}</span>
               {renderExtra ? (
@@ -119,7 +119,7 @@ function Timeline({ title, events, renderExtra }) {
 function NwTable({ label, color, players, lanId }) {
   const cls = color === 'us' ? 'text-team-us' : 'text-team-them';
   return (
-    <div className="rounded border p-3">
+    <div className="rounded-lg border border-border bg-card p-3 shadow-card">
       <div className={`mb-2 text-xs uppercase ${cls}`}>{label}</div>
       <table className="w-full text-sm">
         <tbody>
