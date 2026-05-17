@@ -136,6 +136,13 @@ npm run migrate
 npm run build && npm start
 ```
 
+## Deployment
+
+To run the app in a TrueNAS CORE jail (with the database hosted separately),
+see [docs/truenas-core-jail.md](docs/truenas-core-jail.md). It covers creating
+the iocage jail, installing the app, and an rc.d service that auto-starts the
+app on jail boot.
+
 ## Project layout
 
 ```
