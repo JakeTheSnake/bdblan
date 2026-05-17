@@ -27,7 +27,7 @@ Throughout, replace these placeholders with your real values:
 | `192.168.1.0/24`   | your LAN subnet                                    |
 | `192.168.1.1`      | your LAN gateway                                   |
 | `192.168.1.29`     | the host running MySQL                             |
-| `<JAIL_IP>`        | the address the jail ends up with                  |
+| `192.168.1.116`        | the address of the jail |
 
 ## 1. Create the jail
 
@@ -36,14 +36,14 @@ your TrueNAS version and fetch it:
 
 ```sh
 freebsd-version        # e.g. 13.4-RELEASE-p1 -> use 13.4-RELEASE below
-iocage fetch -r 13.4-RELEASE
+iocage fetch -r 13.5-RELEASE
 ```
 
 Create a VNET jail with DHCP. `boot=on` makes the **jail** start automatically
 when the NAS boots (the app service inside it is configured in step 5):
 
 ```sh
-iocage create -n bdblan -r 13.4-RELEASE \
+iocage create -n bdblan -r 13.5-RELEASE \
   vnet=on \
   bpf=yes \
   dhcp=on \
@@ -105,7 +105,7 @@ node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
 Create `/usr/local/www/bdblan/.env.local`:
 
 ```
-DATABASE_URL=mysql://bdblan:bdblan@192.168.1.20:3306/bdblan
+DATABASE_URL=mysql://bdblan:bdblan@192.168.1.29:3306/bdblan
 OPENDOTA_API_KEY=your-opendota-key
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD_HASH=\$2a\$10\$abcdefghijklmnopqrstuvwxyz...
@@ -153,14 +153,14 @@ rcvar="bdblan_enable"
 load_rc_config $name
 
 : ${bdblan_enable:="NO"}
-: ${bdblan_user:="bdblan"}
+: ${bdblan_runuser:="bdblan"}
 : ${bdblan_dir:="/usr/local/www/bdblan"}
 
 pidfile="/var/run/${name}.pid"
 logfile="/var/log/${name}.log"
 
 command="/usr/sbin/daemon"
-command_args="-r -P ${pidfile} -o ${logfile} -t ${name} -u ${bdblan_user} \
+command_args="-r -P ${pidfile} -o ${logfile} -t ${name} -u ${bdblan_runuser} \
   /bin/sh -c 'cd ${bdblan_dir} && PATH=/usr/local/bin:/usr/bin:/bin exec npm start'"
 
 run_rc_command "$1"
@@ -175,6 +175,12 @@ What this does:
   user; `-o` captures stdout/stderr to `/var/log/bdblan.log`.
 - The explicit `PATH` ensures `npm` can find `node` when started at boot (the
   `bdblan` user has no login shell to set one up).
+- The user variable is named `bdblan_runuser`, **not** `bdblan_user`. Because
+  the service is named `bdblan`, `bdblan_user` would be `${name}_user`, which
+  `rc.subr` treats specially: it would re-wrap the command in
+  `su -c 'sh -c "..."'`, whose quoting collides with the inner `/bin/sh -c
+  '...'` and fails with `Unmatched '"'`. Letting `daemon -u` drop privileges
+  avoids that.
 
 Make it executable, enable it, and start it:
 
@@ -230,5 +236,5 @@ service bdblan restart
 - **Can't reach the app from the LAN** — confirm `<JAIL_IP>` with
   `iocage get ip4_addr bdblan` and that the jail has VNET networking.
 - **Database connection refused** — verify from inside the jail with
-  `nc -z 192.168.1.20 3306`, and that the MySQL user is granted access from
+  `nc -z 192.168.1.29 3306`, and that the MySQL user is granted access from
   the jail's host/IP.
