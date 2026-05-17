@@ -10,6 +10,7 @@ import { getHeroHealingForLan } from '@/lib/aggregations/heroHealing.js';
 import { getSupportWardStatsForLan } from '@/lib/aggregations/supportWards.js';
 import { getCourierKillsForLan } from '@/lib/aggregations/courierKills.js';
 import { getObjectiveKillsForLan } from '@/lib/aggregations/objectiveKills.js';
+import { getLaneWinRatesForLan } from '@/lib/aggregations/laneWinRate.js';
 import Highscore from '@/components/Highscore.jsx';
 import { formatDuration, formatLongDuration, formatPct, formatMatchDate, formatLanDateRange } from '@/lib/format.js';
 
@@ -18,7 +19,7 @@ export const revalidate = false;
 export default async function LanSummaryPage(props) {
   const params = await props.params;
   const lanId = Number(params.lanId);
-  const [data, ezCounts, uniqueHeroCounts, killParticipation, heroDamage, towerDamage, heroHealing, supportWards, courierKills, objectiveKills] = await Promise.all([
+  const [data, ezCounts, uniqueHeroCounts, killParticipation, heroDamage, towerDamage, heroHealing, supportWards, courierKills, objectiveKills, laneWinRate] = await Promise.all([
     getLanSummary(lanId),
     getEzCountsForLan(lanId),
     getUniqueHeroCountsForLan(lanId),
@@ -29,6 +30,7 @@ export default async function LanSummaryPage(props) {
     getSupportWardStatsForLan(lanId),
     getCourierKillsForLan(lanId),
     getObjectiveKillsForLan(lanId),
+    getLaneWinRatesForLan(lanId),
   ]);
   if (!data) notFound();
 
@@ -172,6 +174,21 @@ export default async function LanSummaryPage(props) {
                 value: courierKills.get(Number(p.account_id)) || 0,
               }))
               .sort((a, b) => b.value - a.value)}
+          />
+          <Highscore
+            title="Lane win rate (ties excluded)"
+            lanId={lanId}
+            rows={players
+              .map((p) => {
+                const r = laneWinRate.get(Number(p.account_id));
+                return {
+                  account_id: p.account_id,
+                  persona_name: p.persona_name,
+                  rate: r && r.total > 0 ? r.rate : -1,
+                  value: r && r.total > 0 ? `${Math.round(r.rate * 100)}%` : '-',
+                };
+              })
+              .sort((a, b) => b.rate - a.rate)}
           />
         </div>
       </section>
