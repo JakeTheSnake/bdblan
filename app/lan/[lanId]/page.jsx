@@ -14,7 +14,9 @@ import { getLaneWinRatesForLan } from '@/lib/aggregations/laneWinRate.js';
 import { getHighestNetWorthForLan } from '@/lib/aggregations/highestNetWorth.js';
 import { getHighestDamageForLan } from '@/lib/aggregations/highestDamage.js';
 import { getHighestDamageTakenForLan } from '@/lib/aggregations/highestDamageTaken.js';
+import { getLanImagesForLan } from '@/lib/aggregations/lanImages.js';
 import Highscore from '@/components/Highscore.jsx';
+import LanImages from '@/components/LanImages.jsx';
 import { formatDuration, formatLongDuration, formatPct, formatMatchDate, formatLanDateRange } from '@/lib/format.js';
 
 export const revalidate = false;
@@ -22,7 +24,7 @@ export const revalidate = false;
 export default async function LanSummaryPage(props) {
   const params = await props.params;
   const lanId = Number(params.lanId);
-  const [data, ezCounts, uniqueHeroCounts, killParticipation, heroDamage, towerDamage, heroHealing, supportWards, courierKills, objectiveKills, laneWinRate, highestNetWorth, highestDamage, highestDamageTaken] = await Promise.all([
+  const [data, ezCounts, uniqueHeroCounts, killParticipation, heroDamage, towerDamage, heroHealing, supportWards, courierKills, objectiveKills, laneWinRate, highestNetWorth, highestDamage, highestDamageTaken, lanImages] = await Promise.all([
     getLanSummary(lanId),
     getEzCountsForLan(lanId),
     getUniqueHeroCountsForLan(lanId),
@@ -37,6 +39,7 @@ export default async function LanSummaryPage(props) {
     getHighestNetWorthForLan(lanId),
     getHighestDamageForLan(lanId),
     getHighestDamageTakenForLan(lanId),
+    getLanImagesForLan(lanId),
   ]);
   if (!data) notFound();
 
@@ -248,6 +251,11 @@ export default async function LanSummaryPage(props) {
               .sort((a, b) => b.rate - a.rate)}
           />
         </div>
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-lg font-medium">Images</h2>
+        <LanImages lanId={lanId} images={lanImages} />
       </section>
 
       <section>
