@@ -185,33 +185,48 @@ export default async function LanSummaryPage(props) {
             title="Highest net worth in a game"
             lanId={lanId}
             rows={players
-              .map((p) => ({
-                account_id: p.account_id,
-                persona_name: p.persona_name,
-                value: highestNetWorth.get(Number(p.account_id)) || 0,
-              }))
+              .map((p) => {
+                const best = highestNetWorth.get(Number(p.account_id));
+                return {
+                  account_id: p.account_id,
+                  persona_name: p.persona_name,
+                  value: best ? best.value : 0,
+                  hero_id: best ? best.hero_id : undefined,
+                  hero_icon: best ? best.hero_icon : undefined,
+                };
+              })
               .sort((a, b) => b.value - a.value)}
           />
           <Highscore
             title="Highest damage in a game"
             lanId={lanId}
             rows={players
-              .map((p) => ({
-                account_id: p.account_id,
-                persona_name: p.persona_name,
-                value: highestDamage.get(Number(p.account_id)) || 0,
-              }))
+              .map((p) => {
+                const best = highestDamage.get(Number(p.account_id));
+                return {
+                  account_id: p.account_id,
+                  persona_name: p.persona_name,
+                  value: best ? best.value : 0,
+                  hero_id: best ? best.hero_id : undefined,
+                  hero_icon: best ? best.hero_icon : undefined,
+                };
+              })
               .sort((a, b) => b.value - a.value)}
           />
           <Highscore
             title="Highest damage taken in a game"
             lanId={lanId}
             rows={players
-              .map((p) => ({
-                account_id: p.account_id,
-                persona_name: p.persona_name,
-                value: highestDamageTaken.get(Number(p.account_id)) || 0,
-              }))
+              .map((p) => {
+                const best = highestDamageTaken.get(Number(p.account_id));
+                return {
+                  account_id: p.account_id,
+                  persona_name: p.persona_name,
+                  value: best ? best.value : 0,
+                  hero_id: best ? best.hero_id : undefined,
+                  hero_icon: best ? best.hero_icon : undefined,
+                };
+              })
               .sort((a, b) => b.value - a.value)}
           />
           <Highscore
