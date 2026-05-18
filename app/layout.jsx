@@ -2,7 +2,7 @@ import './globals.css';
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'bdblan',
+  title: 'BDBLAN',
   description: 'Dota 2 LAN stats',
 };
 
