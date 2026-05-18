@@ -193,6 +193,7 @@ export default async function LanSummaryPage(props) {
                   value: best ? best.value : 0,
                   hero_id: best ? best.hero_id : undefined,
                   hero_icon: best ? best.hero_icon : undefined,
+                  match_id: best ? best.match_id : undefined,
                 };
               })
               .sort((a, b) => b.value - a.value)}
@@ -209,6 +210,7 @@ export default async function LanSummaryPage(props) {
                   value: best ? best.value : 0,
                   hero_id: best ? best.hero_id : undefined,
                   hero_icon: best ? best.hero_icon : undefined,
+                  match_id: best ? best.match_id : undefined,
                 };
               })
               .sort((a, b) => b.value - a.value)}
@@ -225,6 +227,7 @@ export default async function LanSummaryPage(props) {
                   value: best ? best.value : 0,
                   hero_id: best ? best.hero_id : undefined,
                   hero_icon: best ? best.hero_icon : undefined,
+                  match_id: best ? best.match_id : undefined,
                 };
               })
               .sort((a, b) => b.value - a.value)}
