@@ -10,6 +10,7 @@ import { getHeroHealingForLan } from '@/lib/aggregations/heroHealing.js';
 import { getSupportWardStatsForLan } from '@/lib/aggregations/supportWards.js';
 import { getCourierKillsForLan } from '@/lib/aggregations/courierKills.js';
 import { getObjectiveKillsForLan } from '@/lib/aggregations/objectiveKills.js';
+import { getTeamfightAdvantageForLan } from '@/lib/aggregations/teamfightAdvantage.js';
 import { getLaneWinRatesForLan } from '@/lib/aggregations/laneWinRate.js';
 import { getHighestNetWorthForLan } from '@/lib/aggregations/highestNetWorth.js';
 import { getHighestDamageForLan } from '@/lib/aggregations/highestDamage.js';
@@ -24,7 +25,7 @@ export const revalidate = false;
 export default async function LanSummaryPage(props) {
   const params = await props.params;
   const lanId = Number(params.lanId);
-  const [data, ezCounts, uniqueHeroCounts, killParticipation, heroDamage, towerDamage, heroHealing, supportWards, courierKills, objectiveKills, laneWinRate, highestNetWorth, highestDamage, highestDamageTaken, lanImages] = await Promise.all([
+  const [data, ezCounts, uniqueHeroCounts, killParticipation, heroDamage, towerDamage, heroHealing, supportWards, courierKills, objectiveKills, laneWinRate, highestNetWorth, highestDamage, highestDamageTaken, lanImages, teamfightAdvantage] = await Promise.all([
     getLanSummary(lanId),
     getEzCountsForLan(lanId),
     getUniqueHeroCountsForLan(lanId),
@@ -40,6 +41,7 @@ export default async function LanSummaryPage(props) {
     getHighestDamageForLan(lanId),
     getHighestDamageTakenForLan(lanId),
     getLanImagesForLan(lanId),
+    getTeamfightAdvantageForLan(lanId),
   ]);
   if (!data) notFound();
 
@@ -91,6 +93,24 @@ export default async function LanSummaryPage(props) {
         <StatCard label="Roshan kills" value={objectiveKills.roshanKills} />
         <StatCard label="Tormentor kills" value={objectiveKills.tormentorKills} />
         <StatCard label={'"ez" count'} value={ezCounts.total} />
+        <StatCard
+          label="More heroes in teamfights (wins)"
+          value={
+            teamfightAdvantage.wins.fights > 0
+              ? formatPct(teamfightAdvantage.wins.advantage / teamfightAdvantage.wins.fights)
+              : '-'
+          }
+          sub={`${teamfightAdvantage.wins.advantage} of ${teamfightAdvantage.wins.fights} teamfights`}
+        />
+        <StatCard
+          label="More heroes in teamfights (losses)"
+          value={
+            teamfightAdvantage.losses.fights > 0
+              ? formatPct(teamfightAdvantage.losses.advantage / teamfightAdvantage.losses.fights)
+              : '-'
+          }
+          sub={`${teamfightAdvantage.losses.advantage} of ${teamfightAdvantage.losses.fights} teamfights`}
+        />
       </section>
 
       <section>
