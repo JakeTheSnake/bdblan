@@ -11,6 +11,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'api.opendota.com' },
     ],
   },
+  allowedDevOrigins: ['192.168.1.24'],
   // Dev convenience: the app lives under /bdb, so a bare / would 404.
   // Redirect it to /bdb. `basePath: false` matches the literal root path
   // instead of /bdb/. In production a reverse proxy is expected to route.

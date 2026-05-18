@@ -5,38 +5,49 @@ import { useRouter } from 'next/navigation';
 import { Plus, Trash2, X } from 'lucide-react';
 import { BASE_PATH } from '@/lib/basePath.js';
 
-// Longest-side pixel cap for the client-generated thumbnail.
+// Longest-side pixel caps for the WebP re-encodes done before upload.
+const FULL_MAX = 2048;
 const THUMB_MAX = 400;
 
-/**
- * Downscale a chosen image to a small WebP thumbnail via <canvas> so the LAN
- * page can render the gallery from tiny blobs. Admin-only path, so doing this
- * in the browser keeps the server dependency-free.
- */
-function makeThumbnail(file) {
+/** Decode a chosen file into an <img> element. */
+function loadImage(file) {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
     const img = new Image();
     img.onload = () => {
       URL.revokeObjectURL(url);
-      const scale = Math.min(1, THUMB_MAX / Math.max(img.width, img.height));
-      const width = Math.max(1, Math.round(img.width * scale));
-      const height = Math.max(1, Math.round(img.height * scale));
-      const canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
-      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-      canvas.toBlob(
-        (blob) => (blob ? resolve(blob) : reject(new Error('thumbnail failed'))),
-        'image/webp',
-        0.82,
-      );
+      resolve(img);
     };
     img.onerror = () => {
       URL.revokeObjectURL(url);
       reject(new Error('could not load image'));
     };
     img.src = url;
+  });
+}
+
+/**
+ * Downscale a decoded image so its longest side is <= maxDim and re-encode it
+ * as WebP via <canvas>. Re-encoding both the full image and the thumbnail keeps
+ * uploads small — so they clear the reverse proxy's body-size limit — and
+ * normalizes any source format (including iPhone HEIC) to something every
+ * browser can render. Browsers bake EXIF orientation into the decoded image,
+ * so the canvas output is already correctly rotated.
+ */
+function drawToWebp(img, maxDim, quality) {
+  return new Promise((resolve, reject) => {
+    const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+    const width = Math.max(1, Math.round(img.width * scale));
+    const height = Math.max(1, Math.round(img.height * scale));
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+    canvas.toBlob(
+      (blob) => (blob ? resolve(blob) : reject(new Error('image encode failed'))),
+      'image/webp',
+      quality,
+    );
   });
 }
 
@@ -80,9 +91,11 @@ export default function LanImages({ lanId, images }) {
     try {
       for (const file of files) {
         if (!file.type.startsWith('image/')) continue;
-        const thumb = await makeThumbnail(file);
+        const img = await loadImage(file);
+        const full = await drawToWebp(img, FULL_MAX, 0.85);
+        const thumb = await drawToWebp(img, THUMB_MAX, 0.82);
         const form = new FormData();
-        form.append('image', file);
+        form.append('image', full, 'image.webp');
         form.append('thumb', thumb, 'thumb.webp');
         form.append('filename', file.name);
         const res = await fetch(`${BASE_PATH}/api/admin/lans/${lanId}/images`, {

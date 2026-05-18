@@ -213,6 +213,30 @@ iocage restart bdblan
 iocage console bdblan -- service bdblan status
 ```
 
+## Reverse proxy
+
+In the real deployment this app jail is **not** exposed directly — it sits
+behind an **nginx reverse proxy running in a separate jail**, which terminates
+the public hostname/TLS and proxies through to `http://<JAIL_IP>:3000`.
+
+One nginx setting matters for the app: **`client_max_body_size`**. nginx
+defaults it to `1m`, and any request body larger than that is rejected with a
+`413` before it ever reaches the app — e.g. uploading photos to a LAN. Raise it
+in the bdblan `server` block (or the `location` that proxies to this app):
+
+```nginx
+client_max_body_size 16m;
+```
+
+Then validate and reload, inside the **nginx jail**:
+
+```sh
+nginx -t && service nginx reload
+```
+
+The app re-encodes uploaded images client-side to stay well under this limit,
+so `16m` is comfortable headroom rather than a hard requirement.
+
 ## Updating the app
 
 ```sh
