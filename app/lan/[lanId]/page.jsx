@@ -10,7 +10,7 @@ import { getHeroHealingForLan } from '@/lib/aggregations/heroHealing.js';
 import { getSupportWardStatsForLan } from '@/lib/aggregations/supportWards.js';
 import { getCourierKillsForLan } from '@/lib/aggregations/courierKills.js';
 import { getObjectiveKillsForLan } from '@/lib/aggregations/objectiveKills.js';
-import { getTeamfightAdvantageForLan } from '@/lib/aggregations/teamfightAdvantage.js';
+import { getTeamfightDisadvantageForLan } from '@/lib/aggregations/teamfightAdvantage.js';
 import { getLaneWinRatesForLan } from '@/lib/aggregations/laneWinRate.js';
 import { getHighestNetWorthForLan } from '@/lib/aggregations/highestNetWorth.js';
 import { getHighestDamageForLan } from '@/lib/aggregations/highestDamage.js';
@@ -41,7 +41,7 @@ export default async function LanSummaryPage(props) {
     getHighestDamageForLan(lanId),
     getHighestDamageTakenForLan(lanId),
     getLanImagesForLan(lanId),
-    getTeamfightAdvantageForLan(lanId),
+    getTeamfightDisadvantageForLan(lanId),
   ]);
   if (!data) notFound();
 
@@ -94,22 +94,22 @@ export default async function LanSummaryPage(props) {
         <StatCard label="Tormentor kills" value={objectiveKills.tormentorKills} />
         <StatCard label={'"ez" count'} value={ezCounts.total} />
         <StatCard
-          label="More heroes in teamfights (wins)"
+          label="Less heroes in teamfights (wins)"
           value={
             teamfightAdvantage.wins.fights > 0
-              ? formatPct(teamfightAdvantage.wins.advantage / teamfightAdvantage.wins.fights)
+              ? formatPct(teamfightAdvantage.wins.disadvantage / teamfightAdvantage.wins.fights)
               : '-'
           }
-          sub={`${teamfightAdvantage.wins.advantage} of ${teamfightAdvantage.wins.fights} teamfights`}
+          sub={`${teamfightAdvantage.wins.disadvantage} of ${teamfightAdvantage.wins.fights} teamfights`}
         />
         <StatCard
-          label="More heroes in teamfights (losses)"
+          label="Less heroes in teamfights (losses)"
           value={
             teamfightAdvantage.losses.fights > 0
-              ? formatPct(teamfightAdvantage.losses.advantage / teamfightAdvantage.losses.fights)
+              ? formatPct(teamfightAdvantage.losses.disadvantage / teamfightAdvantage.losses.fights)
               : '-'
           }
-          sub={`${teamfightAdvantage.losses.advantage} of ${teamfightAdvantage.losses.fights} teamfights`}
+          sub={`${teamfightAdvantage.losses.disadvantage} of ${teamfightAdvantage.losses.fights} teamfights`}
         />
       </section>
 
