@@ -116,7 +116,7 @@ export default async function LanSummaryPage(props) {
 
       <section>
         <h2 className="mb-3 text-lg font-medium">Winrate by selection</h2>
-        <WinrateSelections lanId={lanId} />
+        <WinrateSelections lanId={lanId} totalWinrate={totals.winrate} />
       </section>
 
       <section>

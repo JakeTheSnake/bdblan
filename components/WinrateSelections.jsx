@@ -26,10 +26,11 @@ const SELECTIONS = new Map([
 ]);
 
 /**
- * Two-column table of our winrate under a range of game selections.
- * @param {{ lanId: number }} props
+ * Two-column table of our winrate under a range of game selections. Each
+ * winrate is tinted green/red relative to the LAN's overall winrate.
+ * @param {{ lanId: number, totalWinrate: number }} props
  */
-export default async function WinrateSelections({ lanId }) {
+export default async function WinrateSelections({ lanId, totalWinrate }) {
   const entries = [...SELECTIONS];
   const results = await Promise.all(entries.map(([, fn]) => fn(lanId)));
 
@@ -45,13 +46,19 @@ export default async function WinrateSelections({ lanId }) {
         <tbody>
           {entries.map(([desc], i) => {
             const r = results[i];
+            const color =
+              r.total === 0 || r.winrate === totalWinrate
+                ? ''
+                : r.winrate > totalWinrate
+                  ? 'text-team-us'
+                  : 'text-team-them';
             return (
               <tr key={desc} className="border-t">
                 <td className="p-2 text-right whitespace-nowrap">{desc}</td>
                 <td className="p-2 text-left font-medium whitespace-nowrap">
                   {r.total > 0 ? (
                     <>
-                      {formatPct(r.winrate)}{' '}
+                      <span className={color}>{formatPct(r.winrate)}</span>{' '}
                       <span className="text-muted-foreground">
                         ({r.wins}/{r.total})
                       </span>
