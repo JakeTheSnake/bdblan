@@ -18,6 +18,7 @@ import { getHighestDamageTakenForLan } from '@/lib/aggregations/highestDamageTak
 import { getLanImagesForLan } from '@/lib/aggregations/lanImages.js';
 import Highscore from '@/components/Highscore.jsx';
 import LanImages from '@/components/LanImages.jsx';
+import WinrateSelections from '@/components/WinrateSelections.jsx';
 import { formatDuration, formatLongDuration, formatPct, formatMatchDate, formatLanDateRange } from '@/lib/format.js';
 
 export const revalidate = false;
@@ -111,6 +112,11 @@ export default async function LanSummaryPage(props) {
           }
           sub={`${teamfightAdvantage.losses.disadvantage} of ${teamfightAdvantage.losses.fights} teamfights`}
         />
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-lg font-medium">Winrate by selection</h2>
+        <WinrateSelections lanId={lanId} />
       </section>
 
       <section>
