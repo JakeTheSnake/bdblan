@@ -34,12 +34,12 @@ export default async function WinrateSelections({ lanId }) {
   const results = await Promise.all(entries.map(([, fn]) => fn(lanId)));
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-border bg-card">
-      <table className="w-full text-sm">
-        <thead className="bg-muted/50 text-left">
+    <div className="inline-block max-w-full overflow-x-auto rounded-lg border border-border bg-card">
+      <table className="text-sm">
+        <thead className="bg-muted/50">
           <tr>
-            <th className="p-2">Selection</th>
-            <th className="p-2 text-right">Winrate</th>
+            <th className="p-2 text-right">Selection</th>
+            <th className="p-2 text-left">Winrate</th>
           </tr>
         </thead>
         <tbody>
@@ -47,8 +47,8 @@ export default async function WinrateSelections({ lanId }) {
             const r = results[i];
             return (
               <tr key={desc} className="border-t">
-                <td className="p-2">{desc}</td>
-                <td className="p-2 text-right font-medium">
+                <td className="p-2 text-right whitespace-nowrap">{desc}</td>
+                <td className="p-2 text-left font-medium whitespace-nowrap">
                   {r.total > 0 ? (
                     <>
                       {formatPct(r.winrate)}{' '}
